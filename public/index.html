@@ -327,12 +327,12 @@
         if (errorMsg) {
           const div = document.createElement("div");
           div.className = "result-item";
-          div.innerHTML = \`
+          div.innerHTML = `
             <div class="info">
               <span class="label">提交失败</span>
-              <span class="status error">\\u274c \${errorMsg}</span>
+              <span class="status error">❌ ${errorMsg}</span>
             </div>
-          \`;
+          `;
           resultList.appendChild(div);
           return;
         }
@@ -350,19 +350,18 @@
           div.className = "result-item";
           const statusClass = item.success ? "success" : "error";
           const icon = item.success ? "✅" : "❌";
-          div.innerHTML = \`
+          div.innerHTML = `
             <div class="info">
-              <span class="label">\${item.template} / \${item.version}</span>
-              <span class="status \${statusClass}">\${icon} \${item.message || "完成"}</span>
+              <span class="label">${item.template} / ${item.version}</span>
+              <span class="status ${statusClass}">${icon} ${item.message || "完成"}</span>
             </div>
-          \`;
+          `;
           resultList.appendChild(div);
         });
       }
 
       async function handleSubmit() {
         const items = collectItems();
-
         if (!items.length) {
           renderResults([], "请至少填写一条模板名和版本号");
           return;
