@@ -1,0 +1,67 @@
+import "dotenv/config";
+import express from "express";
+import path from "path";
+import { fileURLToPath } from "url";
+import { publishBatch } from "./publisher.js";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const app = express();
+const port = process.env.PORT || 3000;
+
+app.use(express.json({ limit: "1mb" }));
+app.use(express.static(path.join(__dirname, "public")));
+
+app.get("/health", (_req, res) => {
+  res.json({ status: "ok" });
+});
+
+function parseBulk(bulkText = "") {
+  return bulkText
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter(Boolean)
+    .map((line) => {
+      const [template, version] = line.split(":");
+      return { template: template?.trim(), version: version?.trim() };
+    });
+}
+
+function normalizeItems(body = {}) {
+  const items = Array.isArray(body.items) ? [...body.items] : [];
+
+  if (body.template && body.version) {
+    items.push({ template: body.template, version: body.version });
+  }
+
+  if (body.bulk) {
+    items.push(...parseBulk(body.bulk));
+  }
+
+  return items;
+}
+
+app.post("/api/publish", async (req, res) => {
+  const items = normalizeItems(req.body);
+
+  if (!items.length) {
+    return res
+      .status(400)
+      .json({ success: false, message: "请输入至少一条模板与版本号" });
+  }
+
+  try {
+    const results = await publishBatch(items);
+    res.json({ success: true, results });
+  } catch (err) {
+    res.status(500).json({
+      success: false,
+      message: err.message || "服务异常",
+    });
+  }
+});
+
+app.listen(port, () => {
+  console.log(`发布助手已启动: http://localhost:${port}`);
+});

@@ -1,0 +1,409 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>模板发布助手</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #0f172a;
+        --panel: #111827;
+        --muted: #9ca3af;
+        --text: #e5e7eb;
+        --accent: #4f46e5;
+        --accent-2: #22d3ee;
+        --success: #22c55e;
+        --error: #ef4444;
+        --border: rgba(255, 255, 255, 0.08);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: "Space Grotesk", "Segoe UI", sans-serif;
+        background: radial-gradient(circle at 20% 20%, #1e293b 0%, #0b1220 45%),
+          radial-gradient(circle at 80% 0%, rgba(79, 70, 229, 0.2), transparent 35%),
+          var(--bg);
+        color: var(--text);
+        min-height: 100vh;
+        padding: 24px;
+      }
+
+      .page {
+        max-width: 1000px;
+        margin: 0 auto;
+      }
+
+      header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        padding: 12px 4px 24px;
+      }
+
+      header h1 {
+        margin: 0;
+        font-size: 32px;
+        letter-spacing: -0.02em;
+      }
+
+      header p {
+        margin: 6px 0 0;
+        color: var(--muted);
+        font-size: 15px;
+      }
+
+      .pill {
+        padding: 8px 12px;
+        border-radius: 999px;
+        border: 1px solid var(--border);
+        background: rgba(255, 255, 255, 0.03);
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      .panel {
+        background: linear-gradient(135deg, rgba(32, 41, 64, 0.5), rgba(15, 23, 42, 0.8));
+        border: 1px solid var(--border);
+        border-radius: 18px;
+        padding: 20px;
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 14px;
+      }
+
+      label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 600;
+        font-size: 14px;
+      }
+
+      .input,
+      textarea {
+        width: 100%;
+        padding: 12px 14px;
+        border-radius: 12px;
+        border: 1px solid var(--border);
+        background: rgba(255, 255, 255, 0.04);
+        color: var(--text);
+        font-size: 14px;
+        transition: border 0.2s ease, box-shadow 0.2s ease;
+      }
+
+      .input:focus,
+      textarea:focus {
+        outline: none;
+        border-color: rgba(79, 70, 229, 0.6);
+        box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
+      }
+
+      textarea {
+        resize: vertical;
+        min-height: 120px;
+      }
+
+      .actions {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+        margin-top: 12px;
+      }
+
+      button {
+        border: none;
+        cursor: pointer;
+        border-radius: 12px;
+        padding: 12px 16px;
+        font-weight: 600;
+        color: #fff;
+        transition: transform 0.1s ease, box-shadow 0.2s ease, opacity 0.2s;
+      }
+
+      .primary {
+        background: linear-gradient(120deg, var(--accent), var(--accent-2));
+        box-shadow: 0 10px 30px rgba(79, 70, 229, 0.35);
+      }
+
+      .ghost {
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid var(--border);
+        color: var(--text);
+      }
+
+      button:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+
+      .helper {
+        margin-top: 8px;
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.5;
+      }
+
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 10px;
+        border-radius: 10px;
+        border: 1px solid var(--border);
+        color: var(--muted);
+        font-size: 12px;
+      }
+
+      .results {
+        margin-top: 20px;
+        border-top: 1px dashed var(--border);
+        padding-top: 16px;
+      }
+
+      .result-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 12px 14px;
+        margin-bottom: 8px;
+        border-radius: 12px;
+        border: 1px solid var(--border);
+        background: rgba(255, 255, 255, 0.02);
+      }
+
+      .result-item .info {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+
+      .label {
+        font-weight: 700;
+        letter-spacing: -0.01em;
+      }
+
+      .status {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 13px;
+      }
+
+      .status.success {
+        color: var(--success);
+      }
+
+      .status.error {
+        color: var(--error);
+      }
+
+      .empty {
+        color: var(--muted);
+        text-align: center;
+        padding: 24px 0;
+      }
+
+      @media (max-width: 640px) {
+        header {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page">
+      <header>
+        <div>
+          <h1>模板发布助手</h1>
+          <p>填写模板名和版本号，或一次性粘贴多条，点击发布即可。</p>
+        </div>
+        <div class="pill">同一页面可完成单条和批量发布</div>
+      </header>
+
+      <section class="panel">
+        <div class="grid">
+          <div>
+            <label for="template">模板名</label>
+            <input
+              id="template"
+              class="input"
+              placeholder="例如：template-range-xtd"
+              autocomplete="off"
+            />
+          </div>
+          <div>
+            <label for="version">版本号</label>
+            <input
+              id="version"
+              class="input"
+              placeholder="例如：v1.54.0-rc.29"
+              autocomplete="off"
+            />
+          </div>
+        </div>
+
+        <div style="margin-top: 14px">
+          <label for="bulk">批量粘贴（每行一条，格式：模板名:版本号）</label>
+          <textarea
+            id="bulk"
+            placeholder="template-a:v1.0.0&#10;template-b:v2.3.1"
+          ></textarea>
+          <div class="helper">
+            提示：支持英文冒号、空格或竖线分隔，例如
+            <code>template-demo v1.2.3</code> 或 <code>template-demo|v1.2.3</code>。
+          </div>
+        </div>
+
+        <div class="actions">
+          <button id="submit" class="primary" type="button">开始发布</button>
+          <button id="clear" class="ghost" type="button">清空输入与结果</button>
+          <span class="badge">不会存储数据，所有发布直连接口</span>
+        </div>
+
+        <div class="results">
+          <h3 style="margin: 0 0 10px">发布结果</h3>
+          <div id="resultList"></div>
+        </div>
+      </section>
+    </div>
+
+    <script>
+      const templateInput = document.getElementById("template");
+      const versionInput = document.getElementById("version");
+      const bulkInput = document.getElementById("bulk");
+      const submitBtn = document.getElementById("submit");
+      const clearBtn = document.getElementById("clear");
+      const resultList = document.getElementById("resultList");
+
+      function parseBulkLines(text) {
+        return text
+          .split(/\\r?\\n/)
+          .map((line) => line.trim())
+          .filter(Boolean)
+          .map((line) => {
+            const normalized = line.replace(/[|，]/g, ":").replace(/\\s+/, " ");
+            const parts = normalized.includes(":")
+              ? normalized.split(":")
+              : normalized.split(/\\s+/);
+
+            const template = (parts[0] || "").trim();
+            const version = (parts[1] || "").trim();
+            return { template, version };
+          });
+      }
+
+      function collectItems() {
+        const items = [];
+        const singleTemplate = templateInput.value.trim();
+        const singleVersion = versionInput.value.trim();
+
+        if (singleTemplate && singleVersion) {
+          items.push({ template: singleTemplate, version: singleVersion });
+        }
+
+        if (bulkInput.value.trim()) {
+          items.push(...parseBulkLines(bulkInput.value));
+        }
+
+        return items.filter((item) => item.template && item.version);
+      }
+
+      function renderResults(results = [], errorMsg = "") {
+        resultList.innerHTML = "";
+
+        if (errorMsg) {
+          const div = document.createElement("div");
+          div.className = "result-item";
+          div.innerHTML = \`
+            <div class="info">
+              <span class="label">提交失败</span>
+              <span class="status error">\\u274c \${errorMsg}</span>
+            </div>
+          \`;
+          resultList.appendChild(div);
+          return;
+        }
+
+        if (!results.length) {
+          const empty = document.createElement("div");
+          empty.className = "empty";
+          empty.textContent = "暂无结果，先填写模板名和版本号吧。";
+          resultList.appendChild(empty);
+          return;
+        }
+
+        results.forEach((item) => {
+          const div = document.createElement("div");
+          div.className = "result-item";
+          const statusClass = item.success ? "success" : "error";
+          const icon = item.success ? "✅" : "❌";
+          div.innerHTML = \`
+            <div class="info">
+              <span class="label">\${item.template} / \${item.version}</span>
+              <span class="status \${statusClass}">\${icon} \${item.message || "完成"}</span>
+            </div>
+          \`;
+          resultList.appendChild(div);
+        });
+      }
+
+      async function handleSubmit() {
+        const items = collectItems();
+
+        if (!items.length) {
+          renderResults([], "请至少填写一条模板名和版本号");
+          return;
+        }
+
+        submitBtn.disabled = true;
+        submitBtn.textContent = "发布中...";
+        renderResults([], "");
+
+        try {
+          const resp = await fetch("/api/publish", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ items }),
+          });
+
+          const data = await resp.json();
+
+          if (!resp.ok || !data.success) {
+            throw new Error(data.message || "接口调用失败");
+          }
+
+          renderResults(data.results || []);
+        } catch (err) {
+          renderResults([], err.message || "网络异常");
+        } finally {
+          submitBtn.disabled = false;
+          submitBtn.textContent = "开始发布";
+        }
+      }
+
+      function handleClear() {
+        templateInput.value = "";
+        versionInput.value = "";
+        bulkInput.value = "";
+        renderResults([]);
+      }
+
+      submitBtn.addEventListener("click", handleSubmit);
+      clearBtn.addEventListener("click", handleClear);
+      renderResults([]);
+    </script>
+  </body>
+</html>
