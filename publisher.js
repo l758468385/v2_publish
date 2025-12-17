@@ -1,9 +1,7 @@
 import fetch from "node-fetch";
 
-const API_KEY =
-  process.env.API_KEY || "2f791c32-9810-4de7-b8a7-5e98a000b2fa";
-const SECRET =
-  process.env.SECRET || "342878a9-b7bf-4b4c-a943-f07e8d84f707";
+const API_KEY = "2f791c32-9810-4de7-b8a7-5e98a000b2fa";
+const SECRET = "342878a9-b7bf-4b4c-a943-f07e8d84f707";
 
 // 环境配置映射
 const ENV_CONFIG = {
@@ -19,12 +17,6 @@ const ENV_CONFIG = {
 
 function getEnvConfig(env = "env2") {
   return ENV_CONFIG[env] || ENV_CONFIG.env2;
-}
-
-function ensureConfig() {
-  if (!API_KEY || !SECRET) {
-    throw new Error("请先在环境变量中设置 API_KEY 和 SECRET");
-  }
 }
 
 async function requestSignature(template, version, env = "env2") {
@@ -50,8 +42,6 @@ async function requestSignature(template, version, env = "env2") {
 }
 
 async function publishTemplate(template, version, env = "env2") {
-  ensureConfig();
-
   const config = getEnvConfig(env);
   const { signature, timestamp } = await requestSignature(template, version, env);
 
