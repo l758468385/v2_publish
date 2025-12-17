@@ -1,340 +1,388 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="zh-CN">
 
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>模板发布助手</title>
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap"
-    rel="stylesheet" />
   <style>
     :root {
-      --bg: #0f172a;
-      --panel: #111827;
-      --muted: #9ca3af;
-      --text: #e5e7eb;
-      --accent: #4f46e5;
-      --accent-2: #22d3ee;
-      --success: #22c55e;
+      --bg-color: #050b14;
+      --card-bg: #0b1221;
+      --input-bg: #131b2e;
+      --border-color: #1e293b;
+      --primary-color: #3b82f6;
+      --primary-hover: #2563eb;
+      --text-main: #f1f5f9;
+      --text-muted: #94a3b8;
+      --success: #10b981;
       --error: #ef4444;
-      --border: rgba(255, 255, 255, 0.08);
-    }
-
-    * {
-      box-sizing: border-box;
+      --glow: 0 0 20px rgba(59, 130, 246, 0.15);
     }
 
     body {
       margin: 0;
-      font-family: "Space Grotesk", "Segoe UI", sans-serif;
-      background: radial-gradient(circle at 20% 20%, #1e293b 0%, #0b1220 45%),
-        radial-gradient(circle at 80% 0%, rgba(79, 70, 229, 0.2), transparent 35%),
-        var(--bg);
-      color: var(--text);
+      background-color: var(--bg-color);
+      background-image: radial-gradient(circle at 50% 0%, #172554 0%, var(--bg-color) 50%);
+      color: var(--text-main);
       min-height: 100vh;
-      padding: 24px;
+      display: flex;
+      justify-content: center;
+      padding: 40px 20px;
     }
 
-    .page {
+    .container {
+      width: 100%;
       max-width: 1000px;
-      margin: 0 auto;
     }
 
+    /* Header */
     header {
       display: flex;
-      align-items: center;
       justify-content: space-between;
-      gap: 16px;
-      padding: 12px 4px 24px;
+      align-items: flex-start;
+      margin-bottom: 30px;
     }
 
-    header h1 {
+    .header-content h1 {
+      font-size: 28px;
+      font-weight: 700;
+      margin: 0 0 8px 0;
+      background: linear-gradient(to right, #fff, #94a3b8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .header-content p {
       margin: 0;
-      font-size: 32px;
-      letter-spacing: -0.02em;
+      color: var(--text-muted);
+      font-size: 14px;
     }
 
-    header p {
-      margin: 6px 0 0;
-      color: var(--muted);
-      font-size: 15px;
-    }
-
-    .pill {
-      padding: 8px 12px;
-      border-radius: 999px;
-      border: 1px solid var(--border);
-      background: rgba(255, 255, 255, 0.03);
-      color: var(--muted);
-      font-size: 13px;
-    }
-
-    .env-switch {
+    /* Env Switcher */
+    .env-switcher {
+      background: var(--input-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 20px;
+      padding: 4px;
       display: flex;
       align-items: center;
-      gap: 12px;
-      padding: 8px 12px;
-      border-radius: 12px;
-      background: rgba(255, 255, 255, 0.04);
-      border: 1px solid var(--border);
+      gap: 4px;
     }
 
-    .env-switch label {
-      margin: 0;
+    .env-label {
+      font-size: 12px;
+      color: var(--text-muted);
+      padding-left: 10px;
+      padding-right: 5px;
+    }
+
+    .env-btn {
+      padding: 6px 16px;
+      border-radius: 16px;
       font-size: 13px;
-      color: var(--muted);
       font-weight: 500;
-    }
-
-    .switch-container {
-      position: relative;
-      display: inline-flex;
-      align-items: center;
-      background: rgba(255, 255, 255, 0.05);
-      border-radius: 999px;
-      padding: 3px;
-    }
-
-    .switch-option {
-      padding: 6px 14px;
-      border-radius: 999px;
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--muted);
       cursor: pointer;
-      transition: all 0.2s ease;
+      transition: all 0.2s;
+      color: var(--text-muted);
       user-select: none;
-      z-index: 1;
     }
 
-    .switch-option.active {
-      color: #fff;
+    .env-btn.active {
+      background: var(--primary-color);
+      color: white;
+      box-shadow: 0 2px 10px rgba(59, 130, 246, 0.3);
     }
 
-    .switch-slider {
+    .header-extra {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .extra-text {
+      font-size: 12px;
+      color: var(--text-muted);
+      opacity: 0.6;
+    }
+
+    /* Main Card */
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 30px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card::before {
+      content: '';
       position: absolute;
-      top: 3px;
-      left: 3px;
-      background: linear-gradient(120deg, var(--accent), var(--accent-2));
-      border-radius: 999px;
-      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      box-shadow: 0 2px 8px rgba(79, 70, 229, 0.4);
-      height: calc(100% - 6px);
-      width: calc(50% - 3px);
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--primary-color), transparent);
+      opacity: 0.5;
     }
 
-    .switch-slider.env3 {
-      transform: translateX(100%);
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 20px;
+      color: var(--text-main);
     }
 
-    .panel {
-      background: linear-gradient(135deg, rgba(32, 41, 64, 0.5), rgba(15, 23, 42, 0.8));
-      border: 1px solid var(--border);
-      border-radius: 18px;
-      padding: 20px;
-      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+    .section-title svg {
+      width: 20px;
+      height: 20px;
+      color: var(--primary-color);
     }
 
+    /* Inputs Grid */
     .grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-      gap: 14px;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-bottom: 24px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
     }
 
     label {
-      display: block;
-      margin-bottom: 8px;
-      font-weight: 600;
-      font-size: 14px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-muted);
     }
 
-    .input,
+    input,
     textarea {
-      width: 100%;
-      padding: 12px 14px;
-      border-radius: 12px;
-      border: 1px solid var(--border);
-      background: rgba(255, 255, 255, 0.04);
-      color: var(--text);
+      background: var(--input-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 12px 16px;
+      color: var(--text-main);
+      font-family: 'Inter', monospace;
       font-size: 14px;
-      transition: border 0.2s ease, box-shadow 0.2s ease;
+      transition: all 0.2s;
+      width: 100%;
+      box-sizing: border-box;
     }
 
-    .input:focus,
+    input:focus,
     textarea:focus {
       outline: none;
-      border-color: rgba(79, 70, 229, 0.6);
-      box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
     }
 
     textarea {
-      resize: vertical;
       min-height: 120px;
+      resize: vertical;
+      line-height: 1.6;
     }
 
+    .hint {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 8px;
+      opacity: 0.7;
+    }
+
+    /* Buttons */
     .actions {
       display: flex;
       gap: 12px;
-      flex-wrap: wrap;
-      margin-top: 12px;
+      margin-top: 30px;
+      padding-top: 20px;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
     }
 
-    button {
-      border: none;
+    .btn {
+      padding: 10px 24px;
+      border-radius: 8px;
+      font-weight: 500;
+      font-size: 14px;
       cursor: pointer;
-      border-radius: 12px;
-      padding: 12px 16px;
-      font-weight: 600;
-      color: #fff;
-      transition: transform 0.1s ease, box-shadow 0.2s ease, opacity 0.2s;
+      transition: all 0.2s;
+      border: none;
     }
 
-    .primary {
-      background: linear-gradient(120deg, var(--accent), var(--accent-2));
-      box-shadow: 0 10px 30px rgba(79, 70, 229, 0.35);
+    .btn-primary {
+      background: linear-gradient(135deg, #3b82f6, #2563eb);
+      color: white;
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
     }
 
-    .ghost {
-      background: rgba(255, 255, 255, 0.04);
-      border: 1px solid var(--border);
-      color: var(--text);
+    .btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 16px rgba(37, 99, 235, 0.4);
     }
 
-    button:disabled {
-      opacity: 0.5;
+    .btn-primary:disabled {
+      opacity: 0.7;
       cursor: not-allowed;
+      transform: none;
     }
 
-    .helper {
-      margin-top: 8px;
-      color: var(--muted);
-      font-size: 13px;
-      line-height: 1.5;
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-muted);
+      border: 1px solid var(--border-color);
     }
 
-    .badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 6px 10px;
-      border-radius: 10px;
-      border: 1px solid var(--border);
-      color: var(--muted);
-      font-size: 12px;
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: var(--text-main);
     }
 
-    .results {
-      margin-top: 20px;
-      border-top: 1px dashed var(--border);
-      padding-top: 16px;
+    /* Results */
+    .results-card {
+      margin-top: 24px;
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 24px;
+      min-height: 100px;
+    }
+
+    .result-list {
+      margin-top: 16px;
     }
 
     .result-item {
       display: flex;
-      align-items: center;
       justify-content: space-between;
-      padding: 12px 14px;
-      margin-bottom: 8px;
-      border-radius: 12px;
-      border: 1px solid var(--border);
+      align-items: center;
+      padding: 12px 16px;
       background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      margin-bottom: 8px;
+      font-size: 14px;
     }
 
-    .result-item .info {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
+    .result-item.success {
+      border-left: 3px solid var(--success);
     }
 
-    .label {
-      font-weight: 700;
-      letter-spacing: -0.01em;
+    .result-item.error {
+      border-left: 3px solid var(--error);
     }
 
-    .status {
+    .status-badge {
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      font-size: 13px;
+      font-size: 12px;
+      font-weight: 600;
     }
 
-    .status.success {
+    .status-badge.success {
       color: var(--success);
     }
 
-    .status.error {
+    .status-badge.error {
       color: var(--error);
     }
 
-    .empty {
-      color: var(--muted);
+    .empty-state {
       text-align: center;
-      padding: 24px 0;
+      color: var(--text-muted);
+      padding: 30px;
+      font-size: 14px;
+      opacity: 0.6;
     }
 
-    @media (max-width: 640px) {
+    @media (max-width: 768px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
       header {
         flex-direction: column;
-        align-items: flex-start;
+        gap: 20px;
+      }
+
+      .header-extra {
+        width: 100%;
+        justify-content: space-between;
       }
     }
   </style>
 </head>
 
 <body>
-  <div class="page">
+  <div class="container">
     <header>
-      <div>
+      <div class="header-content">
         <h1>模板发布助手</h1>
         <p>填写模板名和版本号，或一次性粘贴多条，点击发布即可。</p>
       </div>
-      <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
-        <div class="env-switch">
-          <label>环境:</label>
-          <div class="switch-container">
-            <div class="switch-slider" id="switchSlider"></div>
-            <div class="switch-option active" data-env="env2" id="env2Option">测试2</div>
-            <div class="switch-option" data-env="env3" id="env3Option">测试3</div>
-          </div>
+      <div class="header-extra">
+        <div class="env-switcher">
+          <span class="env-label">环境:</span>
+          <div class="env-btn active" id="env2Option">测试2</div>
+          <div class="env-btn" id="env3Option">测试3</div>
         </div>
-        <div class="pill">同一页面可完成单条和批量发布</div>
+        <span class="extra-text">同一页面可完成单条和批量发布</span>
       </div>
     </header>
 
-    <section class="panel">
+    <div class="card">
+      <div class="section-title">
+        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+        </svg>
+        填写发布信息
+      </div>
+
       <div class="grid">
-        <div>
-          <label for="template">模板名</label>
-          <input id="template" class="input" placeholder="例如：template-range-xtd" autocomplete="off" />
+        <div class="form-group">
+          <label>模板名</label>
+          <input id="template" placeholder="例如：template-range-xtd" autocomplete="off">
         </div>
-        <div>
-          <label for="version">版本号</label>
-          <input id="version" class="input" placeholder="例如：v1.54.0-rc.29" autocomplete="off" />
+        <div class="form-group">
+          <label>版本号</label>
+          <input id="version" placeholder="例如：v1.54.0-rc.29" autocomplete="off">
         </div>
       </div>
 
-      <div style="margin-top: 14px">
-        <label for="bulk">批量粘贴（每行一条，格式：模板名:版本号）</label>
+      <div class="form-group">
+        <label>批量粘贴 (每行一条，模板名:版本号)</label>
         <textarea id="bulk" placeholder="template-a:v1.0.0&#10;template-b:v2.3.1"></textarea>
-        <div class="helper">
-          提示：支持英文冒号、空格或竖线分隔，例如
-          <code>template-demo v1.2.3</code> 或 <code>template-demo|v1.2.3</code>。
-        </div>
-        <button id="transform" class="ghost" type="button" style="margin-top: 10px;">格式转换</button>
-        <span class="helper" style="margin-left: 8px;">自动补 template- 前缀 + 特殊模板映射</span>
+        <div class="hint">提示：支持英文冒号、空格或竖线分隔粘贴，例如 template-demo v1.2.3 或 template-demo|v1.2.3</div>
       </div>
 
       <div class="actions">
-        <button id="submit" class="primary" type="button">开始发布</button>
-        <button id="clear" class="ghost" type="button">清空输入与结果</button>
-        <span class="badge">不会存储数据，所有发布直连接口</span>
+        <button id="submit" class="btn btn-primary">发布镜像</button>
+        <button id="transform" class="btn btn-secondary">格式转换</button>
+        <button id="clear" class="btn btn-secondary">清空输入与结果</button>
       </div>
+    </div>
 
-      <div class="results">
-        <h3 style="margin: 0 0 10px">发布结果</h3>
-        <div id="resultList"></div>
+    <div class="results-card">
+      <div class="section-title">
+        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        发布结果
       </div>
-    </section>
+      <div id="resultList" class="result-list">
+        <!-- Results will appear here -->
+      </div>
+    </div>
   </div>
 
   <script>
@@ -348,7 +396,6 @@
     // 环境切换相关
     const env2Option = document.getElementById("env2Option");
     const env3Option = document.getElementById("env3Option");
-    const switchSlider = document.getElementById("switchSlider");
     let currentEnv = "env2"; // 默认环境2
 
     // 环境切换逻辑
@@ -358,11 +405,9 @@
       if (env === "env2") {
         env2Option.classList.add("active");
         env3Option.classList.remove("active");
-        switchSlider.classList.remove("env3");
       } else {
         env2Option.classList.remove("active");
         env3Option.classList.add("active");
-        switchSlider.classList.add("env3");
       }
 
       // 保存到 localStorage
@@ -461,11 +506,11 @@
 
       if (errorMsg) {
         const div = document.createElement("div");
-        div.className = "result-item";
+        div.className = "result-item error";
         div.innerHTML = `
             <div class="info">
-              <span class="label">提交失败</span>
-              <span class="status error">❌ ${errorMsg}</span>
+              <span class="status-badge error">❌ 提交失败</span>
+              <span style="margin-left: 8px">${errorMsg}</span>
             </div>
           `;
         resultList.appendChild(div);
@@ -474,22 +519,22 @@
 
       if (!results.length) {
         const empty = document.createElement("div");
-        empty.className = "empty";
-        empty.textContent = "暂无结果,先填写模板名和版本号吧。";
+        empty.className = "empty-state";
+        empty.textContent = "暂无结果，先填写模板名和版本号吧。";
         resultList.appendChild(empty);
         return;
       }
 
       results.forEach((item) => {
         const div = document.createElement("div");
-        div.className = "result-item";
         const statusClass = item.success ? "success" : "error";
+        div.className = `result-item ${statusClass}`;
         const icon = item.success ? "✅" : "❌";
         div.innerHTML = `
             <div class="info">
-              <span class="label">${item.template} / ${item.version}</span>
-              <span class="status ${statusClass}">${icon} ${item.message || "完成"}</span>
+              <span class="status-badge ${statusClass}">${icon} ${item.template} / ${item.version}</span>
             </div>
+            <span style="color: var(--text-muted); font-size: 13px;">${item.message || "完成"}</span>
           `;
         resultList.appendChild(div);
       });
@@ -524,7 +569,7 @@
         renderResults([], err.message || "网络异常");
       } finally {
         submitBtn.disabled = false;
-        submitBtn.textContent = "开始发布";
+        submitBtn.textContent = "发布镜像";
       }
     }
 
