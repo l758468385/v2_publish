@@ -19,8 +19,15 @@ npm start
 
 ## Docker 部署
 
+首次部署（如有旧容器需先清理）：
 ```bash
-docker-compose up -d
+docker stop publish-web; docker rm publish-web
+docker-compose up -d --build
+```
+
+后续更新：
+```bash
+docker-compose down && docker-compose up -d --build
 ```
 
 常用命令：
