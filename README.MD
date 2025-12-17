@@ -137,6 +137,34 @@ docker-compose down
 docker-compose restart
 ```
 
+### 一键部署脚本 (最简单)
+
+我们提供了一键部署脚本,自动完成所有配置和部署步骤:
+
+```bash
+# 上传代码到 VPS 后,执行:
+chmod +x deploy.sh
+./deploy.sh
+```
+
+脚本会自动:
+- ✅ 检查 Docker 环境
+- ✅ 引导配置 .env 文件
+- ✅ 构建 Docker 镜像
+- ✅ 启动容器并进行健康检查
+- ✅ 显示访问地址和常用命令
+
+## 详细部署文档
+
+查看 [DEPLOYMENT.md](./DEPLOYMENT.md) 获取:
+- 完整的部署步骤说明
+- Nginx 反向代理配置
+- SSL 证书配置
+- 防火墙设置
+- 故障排查指南
+- 性能优化建议
+
+
 ## 目录说明
 - `server.js`：Express 后端，暴露 `/api/publish` 接口并托管静态页面。
 - `publisher.js`：发布逻辑封装，负责获取签名并调用发布接口。
