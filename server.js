@@ -44,6 +44,7 @@ function normalizeItems(body = {}) {
 
 app.post("/api/publish", async (req, res) => {
   const items = normalizeItems(req.body);
+  const env = req.body.env || "env2"; // 默认使用测试2环境
 
   if (!items.length) {
     return res
@@ -52,7 +53,7 @@ app.post("/api/publish", async (req, res) => {
   }
 
   try {
-    const results = await publishBatch(items);
+    const results = await publishBatch(items, env);
     res.json({ success: true, results });
   } catch (err) {
     res.status(500).json({

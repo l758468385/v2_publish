@@ -70,6 +70,64 @@
         font-size: 13px;
       }
 
+      .env-switch {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 8px 12px;
+        border-radius: 12px;
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid var(--border);
+      }
+
+      .env-switch label {
+        margin: 0;
+        font-size: 13px;
+        color: var(--muted);
+        font-weight: 500;
+      }
+
+      .switch-container {
+        position: relative;
+        display: inline-flex;
+        align-items: center;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 999px;
+        padding: 3px;
+      }
+
+      .switch-option {
+        padding: 6px 14px;
+        border-radius: 999px;
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--muted);
+        cursor: pointer;
+        transition: all 0.2s ease;
+        user-select: none;
+        z-index: 1;
+      }
+
+      .switch-option.active {
+        color: #fff;
+      }
+
+      .switch-slider {
+        position: absolute;
+        top: 3px;
+        left: 3px;
+        background: linear-gradient(120deg, var(--accent), var(--accent-2));
+        border-radius: 999px;
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 0 2px 8px rgba(79, 70, 229, 0.4);
+        height: calc(100% - 6px);
+        width: calc(50% - 3px);
+      }
+
+      .switch-slider.env3 {
+        transform: translateX(100%);
+      }
+
       .panel {
         background: linear-gradient(135deg, rgba(32, 41, 64, 0.5), rgba(15, 23, 42, 0.8));
         border: 1px solid var(--border);
@@ -230,7 +288,17 @@
           <h1>模板发布助手</h1>
           <p>填写模板名和版本号，或一次性粘贴多条，点击发布即可。</p>
         </div>
-        <div class="pill">同一页面可完成单条和批量发布</div>
+        <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+          <div class="env-switch">
+            <label>环境:</label>
+            <div class="switch-container">
+              <div class="switch-slider" id="switchSlider"></div>
+              <div class="switch-option active" data-env="env2" id="env2Option">测试2</div>
+              <div class="switch-option" data-env="env3" id="env3Option">测试3</div>
+            </div>
+          </div>
+          <div class="pill">同一页面可完成单条和批量发布</div>
+        </div>
       </header>
 
       <section class="panel">
@@ -287,17 +355,49 @@
       const submitBtn = document.getElementById("submit");
       const clearBtn = document.getElementById("clear");
       const resultList = document.getElementById("resultList");
+      
+      // 环境切换相关
+      const env2Option = document.getElementById("env2Option");
+      const env3Option = document.getElementById("env3Option");
+      const switchSlider = document.getElementById("switchSlider");
+      let currentEnv = "env2"; // 默认环境2
+
+      // 环境切换逻辑
+      function switchEnvironment(env) {
+        currentEnv = env;
+        
+        if (env === "env2") {
+          env2Option.classList.add("active");
+          env3Option.classList.remove("active");
+          switchSlider.classList.remove("env3");
+        } else {
+          env2Option.classList.remove("active");
+          env3Option.classList.add("active");
+          switchSlider.classList.add("env3");
+        }
+        
+        // 保存到 localStorage
+        localStorage.setItem("publishEnv", env);
+      }
+
+      // 初始化环境选择
+      const savedEnv = localStorage.getItem("publishEnv") || "env2";
+      switchEnvironment(savedEnv);
+
+      // 绑定点击事件
+      env2Option.addEventListener("click", () => switchEnvironment("env2"));
+      env3Option.addEventListener("click", () => switchEnvironment("env3"));
 
       function parseBulkLines(text) {
         return text
-          .split(/\\r?\\n/)
+          .split(/\r?\n/)
           .map((line) => line.trim())
           .filter(Boolean)
           .map((line) => {
-            const normalized = line.replace(/[|，]/g, ":").replace(/\\s+/, " ");
+            const normalized = line.replace(/[|,]/g, ":").replace(/\s+/, " ");
             const parts = normalized.includes(":")
               ? normalized.split(":")
-              : normalized.split(/\\s+/);
+              : normalized.split(/\s+/);
 
             const template = (parts[0] || "").trim();
             const version = (parts[1] || "").trim();
@@ -340,7 +440,7 @@
         if (!results.length) {
           const empty = document.createElement("div");
           empty.className = "empty";
-          empty.textContent = "暂无结果，先填写模板名和版本号吧。";
+          empty.textContent = "暂无结果,先填写模板名和版本号吧。";
           resultList.appendChild(empty);
           return;
         }
@@ -375,7 +475,7 @@
           const resp = await fetch("/api/publish", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ items }),
+            body: JSON.stringify({ items, env: currentEnv }),
           });
 
           const data = await resp.json();

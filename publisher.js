@@ -4,30 +4,37 @@ const API_KEY =
   process.env.API_KEY || "2f791c32-9810-4de7-b8a7-5e98a000b2fa";
 const SECRET =
   process.env.SECRET || "342878a9-b7bf-4b4c-a943-f07e8d84f707";
-const AUTH_URL =
-  process.env.AUTH_URL ||
-  "https://spa-shop-sandbox2.eshoptechhub.com/spa-open-api/auth/generate-signature";
-const PUBLISH_URL =
-  process.env.PUBLISH_URL ||
-  "https://spa-shop-sandbox2.eshoptechhub.com/spa-open-api/versions/publish";
+
+// 环境配置映射
+const ENV_CONFIG = {
+  env2: {
+    AUTH_URL: "https://spa-shop-sandbox2.eshoptechhub.com/spa-open-api/auth/generate-signature",
+    PUBLISH_URL: "https://spa-shop-sandbox2.eshoptechhub.com/spa-open-api/versions/publish"
+  },
+  env3: {
+    AUTH_URL: "https://spa-shop-sandbox3.eshoptechhub.com/spa-open-api/auth/generate-signature",
+    PUBLISH_URL: "https://spa-shop-sandbox3.eshoptechhub.com/spa-open-api/versions/publish"
+  }
+};
+
+function getEnvConfig(env = "env2") {
+  return ENV_CONFIG[env] || ENV_CONFIG.env2;
+}
 
 function ensureConfig() {
   if (!API_KEY || !SECRET) {
     throw new Error("请先在环境变量中设置 API_KEY 和 SECRET");
   }
-
-  if (!AUTH_URL || !PUBLISH_URL) {
-    throw new Error("缺少 AUTH_URL 或 PUBLISH_URL 配置");
-  }
 }
 
-async function requestSignature(template, version) {
+async function requestSignature(template, version, env = "env2") {
+  const config = getEnvConfig(env);
   const authBody = {
     secret: SECRET,
     body: { template, version },
   };
 
-  const resp = await fetch(AUTH_URL, {
+  const resp = await fetch(config.AUTH_URL, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(authBody),
@@ -42,12 +49,13 @@ async function requestSignature(template, version) {
   return data.data;
 }
 
-async function publishTemplate(template, version) {
+async function publishTemplate(template, version, env = "env2") {
   ensureConfig();
 
-  const { signature, timestamp } = await requestSignature(template, version);
+  const config = getEnvConfig(env);
+  const { signature, timestamp } = await requestSignature(template, version, env);
 
-  const resp = await fetch(PUBLISH_URL, {
+  const resp = await fetch(config.PUBLISH_URL, {
     method: "POST",
     headers: {
       "x-api-key": API_KEY,
@@ -68,7 +76,7 @@ async function publishTemplate(template, version) {
   return { success: false, message };
 }
 
-async function publishBatch(items = []) {
+async function publishBatch(items = [], env = "env2") {
   const results = [];
 
   for (const item of items) {
@@ -86,7 +94,7 @@ async function publishBatch(items = []) {
     }
 
     try {
-      const result = await publishTemplate(template, version);
+      const result = await publishTemplate(template, version, env);
       results.push({ template, version, ...result });
     } catch (err) {
       results.push({
