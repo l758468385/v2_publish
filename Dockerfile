@@ -8,6 +8,6 @@ RUN npm ci --omit=dev
 COPY . .
 
 ENV NODE_ENV=production
-EXPOSE 3322
+EXPOSE 33222
 
 CMD ["npm", "start"]

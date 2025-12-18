@@ -6,4 +6,4 @@ services:
     container_name: publish-web
     restart: unless-stopped
     ports:
-      - "3322:3322"
+      - "33222:33222"

@@ -15,7 +15,7 @@ npm install
 npm start
 ```
 
-浏览器访问 `http://localhost:3322`
+浏览器访问 `http://localhost:33222`
 
 ## Docker 部署
 
