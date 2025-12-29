@@ -331,6 +331,7 @@
       <div class="header-extra">
         <div class="env-switcher">
           <span class="env-label">环境:</span>
+          <div class="env-btn" id="env1Option">测试1</div>
           <div class="env-btn active" id="env2Option">测试2</div>
           <div class="env-btn" id="env3Option">测试3</div>
         </div>
@@ -394,6 +395,7 @@
     const resultList = document.getElementById("resultList");
 
     // 环境切换相关
+    const env1Option = document.getElementById("env1Option");
     const env2Option = document.getElementById("env2Option");
     const env3Option = document.getElementById("env3Option");
     let currentEnv = "env2"; // 默认环境2
@@ -402,11 +404,17 @@
     function switchEnvironment(env) {
       currentEnv = env;
 
-      if (env === "env2") {
+      // 移除所有 active 状态
+      env1Option.classList.remove("active");
+      env2Option.classList.remove("active");
+      env3Option.classList.remove("active");
+
+      // 给当前选中的添加 active
+      if (env === "env1") {
+        env1Option.classList.add("active");
+      } else if (env === "env2") {
         env2Option.classList.add("active");
-        env3Option.classList.remove("active");
       } else {
-        env2Option.classList.remove("active");
         env3Option.classList.add("active");
       }
 
@@ -419,6 +427,7 @@
     switchEnvironment(savedEnv);
 
     // 绑定点击事件
+    env1Option.addEventListener("click", () => switchEnvironment("env1"));
     env2Option.addEventListener("click", () => switchEnvironment("env2"));
     env3Option.addEventListener("click", () => switchEnvironment("env3"));
 
